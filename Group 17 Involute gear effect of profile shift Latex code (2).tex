@@ -1,0 +1,588 @@
+\documentclass{article}
+
+% Packages
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{amsmath} %for equation environment
+\usepackage{ragged2e} % For text justification
+
+% Page setup
+\geometry{
+    a4paper,
+    total={170mm,257mm},
+    left=20mm,
+    top=20mm, 
+}
+
+% Custom commands
+\newcommand{\Rule}{\rule{\textwidth}{1mm}}
+
+% Title
+\title{\vspace{0.5cm} Case Study Cyber Physical Production System Using AM\vspace{2cm}\\
+\Huge INVOLUTE GEAR EFFECT OF PROFILE SHIFT}\vspace{2cm}
+\author{\vspace{2mm}Group 17\\
+Bennet Kurian(22300722) \\
+Sarath Satheesh(22301967) \\
+Sajin Saji(22300624) \vspace{2cm}\\
+\vspace{2cm}\\
+\Large Research Advisor: Prof. Dr.-Ing. Stefan Scherbarth}
+\date{\vspace{1cm}\today}
+
+% Document
+\begin{document}
+
+\thispagestyle{empty}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{thd_logo_quadratisch.png}
+\end{figure}
+
+\maketitle
+
+\thispagestyle{empty}
+\vspace{3cm}
+\begin{abstract}   \hrule
+\end{abstract}
+    \emph{
+    One of the basic concepts in mechanical engineering is involute gearing. It is a kind of gearing based on exact involute curve geometry that provides a good course of complete gear tooth meshing for power transmission. Perhaps the most important development in gear design has been the introduction of profile shift, a strategic approach to tooth geometry modifications along the gear's axis. Positive profile shift moves the tooth profile inward towards the center of the gear, while negative profile shift displaces it outward. In this manner, it helps in the optimization of the gear meshing characteristics and mitigation of problems, which include undercut. This paper investigates the subtle interaction taking place when profile shift is applied to an involute gearing system, to bring out its dramatic effects on tooth geometry, meshing behavior, and the performance of gears in general. It is, therefore, hoped that such studies will give invaluable insight into optimization and gear design studies for diverse engineering applications. More importantly, this study result will set an impulse to develop a parametric model of involute gears with a profile shift and up the potential of their customization and understanding of the operational principles using IceSL and Lua scripting. The functional attributes of profile-shifted involute gears will also be recorded into an educational video to be distributed around the world, promoting better understanding of gear design and operation in the engineering field, and in general.\\}
+    
+    \emph{
+    Eines der Grundkonzepte im Maschinenbau ist das Evolventengetriebe. Es handelt sich um eine Verzahnungsart, die auf einer exakten Evolventenkurvengeometrie basiert und einen guten Verlauf des vollständigen Zahneingriffs für die Kraftübertragung gewährleistet. Die vielleicht wichtigste Entwicklung im Zahnraddesign war die Einführung der Profilverschiebung, einem strategischen Ansatz zur Änderung der Zahngeometrie entlang der Zahnradachse. Eine positive Profilverschiebung verschiebt das Zahnprofil nach innen zur Mitte des Zahnrads, während eine negative Profilverschiebung es nach außen verschiebt. Auf diese Weise trägt es zur Optimierung der Zahneingriffseigenschaften und zur Minderung von Problemen, einschließlich Hinterschneidungen, bei. In diesem Artikel wird die subtile Wechselwirkung untersucht, die auftritt, wenn die Profilverschiebung auf ein Evolventengetriebesystem angewendet wird, um deren dramatische Auswirkungen auf die Zahngeometrie, das Eingriffsverhalten und die Leistung von Zahnrädern im Allgemeinen hervorzuheben. Es besteht daher die Hoffnung, dass solche Studien unschätzbare Einblicke in Optimierungs- und Getriebedesignstudien für verschiedene technische Anwendungen liefern werden. Noch wichtiger ist, dass dieses Studienergebnis einen Impuls für die Entwicklung eines parametrischen Modells von Evolventenrädern mit Profilverschiebung geben und das Potenzial für deren Anpassung und das Verständnis der Betriebsprinzipien mithilfe von IceSL- und Lua-Skripten erhöhen wird. Die funktionalen Eigenschaften von profilverschobenen Evolventengetrieben werden außerdem in einem Lehrvideo aufgezeichnet, das weltweit verbreitet wird und ein besseres Verständnis für Getriebekonstruktion und -betrieb im technischen Bereich und im Allgemeinen fördert.\\}
+\newpage
+\tableofcontents                 %% add table of contents    
+\newpage
+\section{INTRODUCTION}
+
+\justifying
+The step of profile shift into the world of involute gearing is an extremely important development in the gear technology that might be said to be a watershed in the development of practices in mechanical engineering. The theory dates back to the late 19th century. It was founded at that time by Oskar Lasche, who empirically proved the advantages and stimulated further studies on the possibilities to manipulate gear geometry to increase the properties of gearing \cite{MilleniumOutlook14}. 
+
+Involutes have been adopted traditionally in gearing to obtain smooth power transmission because the geometry between the exact two curves enables the smooth engagement of the gear teeth. This means that this allows for effective and reliable operation in mechanical systems. 
+
+In his "Treatise on Gears" from 1890, George B. Grant advocated for the superiority of the involute tooth profile over the cycloidal profile. He highlighted that cycloidal gears are restricted to mesh only at their standard center distance, limiting design flexibility as the pitch circles must align\cite{colbourne2012geometry2}. Conversely, involute gears, as emphasized by Max Maag's pioneering "MAAG Tooth System" in 1908, offer versatility in meshing at various center distances. Maag's innovations, showcased in 1915 with precision-manufactured gears, set new industry standards and showcased the practical application of profile shift techniques.\cite{MilleniumOutlook14}.
+
+Max Folmer probably invented the term "profile shift" in the year 1919, and the term now is deeply seated in the engineering nomenclature. Profile shift is an intentional modification of the orthodox gearing system, in which the tooth profile is shifted axially according to some agenda. This shift, defined by a profile shift coefficient (denoted as x), affects some important parameters of the involute gears directly, for example, tooth thickness, tip diameter, and center distance\cite{MilleniumOutlook14}. 
+
+The value of the profile shift factor x is then interrelated to the value of the module of the gear m, and engineers can precisely obtain the value of the profile shift, V, with the help of the following formula: V=xxm
+ 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.25\linewidth]{Fig 1.2 Involute Gear.jpg}
+    \caption { Involute Gear \cite{Profileshift-of-Involute-Gears5}}
+    \label{fig:enter-label}
+\end{figure}
+
+The historical importance and technological significance of involute gearing with profile shift only increase the rationale for continued research in this direction. Engineers are looking into the subtleties of profile shift deep inside and their effects on the geometry of gears, behavior at the mesh, and performance at large to contribute to the insights that could guide optimizations in gear designs in diverse engineering applications. These historical benchmarks not only speak of the iterative nature of the progress in engineering but also of the lasting heritage of innovation in shaping modern mechanical engineering practices.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\linewidth]{Fig 1.3 Profile shift on tooth shape [5].jpg}
+    \caption{ Profile shift on tooth shape \cite{Profileshift-of-Involute-Gears5}}
+    \label{fig:enter-label}
+\end{figure}\\
+Profile shifting in involute gears serves two primary purposes: preventing undercutting and adjusting the center distance between gears. Undercutting, common in gears with few teeth, weakens them and increases the risk of breakage. Shifting the gear's profile redistributes stress, preserving tooth strength even with fewer teeth.
+During profile shift, the tool profile is moved outward during gear cutting. This change uses a different segment of the involute curve, preventing undercutting and maintaining tooth strength. Moreover, profile shift enables center distance adjustment in gear assemblies, enhancing flexibility in gear system design and application.
+
+\newpage
+\section{GEOMETRY OF INVOLUTE GEAR}
+\subsection{Nomenclature of Involute Gear}
+
+Our system includes two involute gears, the first part will be explaining about the terminologies of involute gears.
+
+
+   \begin{figure}[h]
+       \centering
+       \includegraphics[width=0.5\linewidth]{Images/Picture1.png}
+       \caption{ Nomenclature of Teeth \cite{GearTerminology8}}
+       \label{ Nomenclature of Teeth}
+   \end{figure}
+
+  In the subsequent sections, reference shall be made to the geometry definitions described below. In describing the geometry of a spur involute gears, Budynas et. Al \cite{budynas2011shigley9}, used the following nomenclature and associated definitions to explain the spur involute gear (with reference to the above figure )
+  
+•	The pitch circle is a theoretical circle upon which all calculations are usually based; its diameter is the pitch diameter. The pitch circles of a pair of mating gears are tangent 6 to each other. A pinion is the smaller of two mating gears. The larger is often called the gear.
+
+•	The pitch point is a common point of contact between two pitch circles.
+
+•	The module m is the ratio of the pitch diameter to the number of teeth. The customary unit of length used is the millimeter.
+
+•	The Pitch circle diameter  is the diameter of the pitch circle. The size of the gear s usually specified by the pitch circle diameter. It is also called as pitch diameter.
+
+•	The addendum (ha) is the radial distance between the top land and the pitch circle. 
+
+•	The dedendum (hf ) is the radial distance from the bottom land to the pitch circle. 
+
+•	The Addendum circle  is the circle drawn through the top of the teeth and is con- centric with the pitch circle.
+
+•	The Dedendum circle is the circle drawn through the bottom of the teeth. It is also called root circle.
+
+•	The Circular pitch is the distance measured on the circumference of the pitch circle from a point of one tooth to the corresponding point on the next tooth.
+
+•	The Diametral pitch  is the ratio of number of teeth to the pitch circle diameter in millimetres
+
+•	The Clearance (c) is the radial distance from the top of the tooth to the bottom of the tooth, in meshing gear. A circle passing through the top of the meshing gear is known as the clearance circle.
+
+•	The whole depth (h) is the sum of the addendum and the dedendum. 
+
+•	The working depth (hw) is radial distance from the addendum circle to the clearance circle. It is equal to the sum of the addendum of the two meshing gears.
+
+•	The backlash is the amount by which the width of a tooth space exceeds the thickness of the engaging tooth measured on the pitch circles.
+
+•	The Face width  is the width of the gear tooth measured parallel to its axis.
+
+•	The Fillet radius is the radius that connects the root circle to the profile of the  tooth.
+
+•	The Path of contact  is the path traced by the point of contact of two teeth from the beginning to the end of engagement[11]
+Figure 2.1 shows the basic terminology of involute gear \cite{Learnengineering-Gear-Types-11}
+\newpage
+\section{Generation of Involute Gear}
+Involute gear profile widely used in gearing systems. The profile of the teeth in an involute gear are involutes the circle. The involute of a circle can be defined as the path traced by a point on a taut string as it is unwound from around the circle. Here are the parametric equations for an involute curve:
+\begin{equation}
+    x = r_b (\cos\psi + \psi \sin\psi) \\
+    y = r_b (\sin\psi - \psi \cos\psi)
+\end{equation}
+
+Where:
+
+•\( r_b \) is the base radius of the circle.
+
+•($\psi$) is the roll angle in radians
+These equations specifically define an involute for a circle positioned at the origin (0,0) with the involute base starting at a polar angle of zero in the xy-plane[10].
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{2.5 Involute Curve.jpg}
+    \caption{ Involute Curve Diagram\cite{ChadGlinsky10}}
+    \label{fig:enter-label}
+\end{figure}
+
+The involute gear is a profile of an involute of a circle. The circle of the involute gear is a roulette obtained by rolling a straight line of contact over a circle. The involute of a circle of varying radius is the evolute of the circle of constant radius called the base circle, with radius \( r_b \) and diameter \( d_b \). The simple involute is given by the involute of a circle, as shown in Figure 3.1.
+
+Additionally, the involute function, which is a function of the pressure angle is calculated by:
+\begin{equation}
+    \mathrm{inv}\alpha=\tan{\alpha}-\alpha(rad)
+\end{equation}
+\begin{equation}
+    a = \cos^{-1}\left(\frac{r_b}{r}\right)
+\end{equation}
+\begin{equation}
+    x = r \cos(\text{inv}\alpha)
+\end{equation}
+\begin{equation}
+    y = r \sin(\text{inv}\alpha)
+\end{equation}
+
+\begin{figure} [h]
+    \centering
+    \includegraphics[width=0.3\linewidth]{Fig 2.6 Parametric curve [10].png}
+    \caption{Parametric curve \cite{ChadGlinsky10}}
+    \label{fig:enter-label}
+\end{figure}
+
+The tooth flanks of gearwheels are made up of the more distant part of the involute, while the base circle diameter remains as normal. Profile shifted gears make use of the less curved part of the involute for the tooth shape \cite{Construction-and-design-of-involute-gears1}.
+\subsection{Involute Gear Calculation Equation}
+To derive the mathematical model for involute gear using 3D printing, one must have all the necessary mathematical geometry so that a 3D printed gear can be developed using Lua Script and IceSL. For the sake of definitions, let's consider the following basic parameters, presented in the form of a table below. For a 3D-geomatry, it demands to specify the helix angle and thickness of the gear. Since Lua is a powerful language script, equivalent to C language, by using it, we can generate involute gear in IceSL which is itself strong slicer software.
+\subsubsection{Curvature}
+Curvature ($\kappa$) of a curve at a particular point. It is indeed defined as the reciprocal of the radius of curvature ( R ) at that point:
+\begin{equation}
+    \kappa=\frac{1}{R}
+\end{equation}
+For an involute of a circle, the curvature at any point on the involute can be calculated using the roll angle \( \psi \). The radius of curvature \( R \) of the involute is related to the base radius \( r_b \) and the roll angle \( \psi \) by this equation:
+\begin{equation}
+    R = \frac{r_b}{{\cos}^3(\psi)}
+\end{equation}
+Thus, the curvature (k) at any point on the involute can be calculated by:
+
+\begin{equation}
+    \kappa = \frac{{\cos(\psi)}^3}{r_b}
+\end{equation}
+
+This equation shows that as the roll angle (psi) increases, the radius of curvature ( R ) also increases, and the curvature (k) decreases. The center of curvature for any point on the involute curve indeed lies on the base circle, and the radius of curvature is equal to the distance rolled along the base circle from the starting point of the involute. This property is what makes the involute shape so important in gear design, as it ensures constant velocity ratios between meshing gears.
+
+\subsubsection{Pressure Angle}
+The involute angle and pressure angle are represented by the same Greek letter ($\alpha$). The involute angle in the involute function can be interpreted as the operating angle ($\alpha_b$) if we consider that point $P$ lies on the operating pitch circle of the gear, corresponding to the pitch point $C$. The line of action is determined by the tangent to the base circle passing through the pitch point $C$, making the distance $TP$ a part of this line of action. Therefore, the involute angle ($\alpha$) essentially reflects the operating pressure angle ($\alpha_b$). However, if point $P$ lies on the reference pitch circle of the gear, then we obtain the standard pressure angle ($\alpha_0$).
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.35\linewidth]{Pressure Angle-01.jpeg.jpg}
+    \caption{Pressure Angle \cite{Calculation-of-involute-gears-6}}
+    \label{fig:enter-label}
+\end{figure}
+The pressure angle is the angle that measures how slanted a gear tooth’s side is compared to a line drawn straight out from the center of the gear\cite{ChadGlinsky10}. It helps determine the shape of the gear tooth. The equation for the base radius of the gear in relation to the pressure angle is:
+\begin{equation}
+    r_b=\frac{r}{\cos{\alpha}}
+\end{equation}
+This means the base radius \( r_b \) is the result of dividing the gear’s radius \( r \) by the cosine of the pressure angle \( \alpha \). Simply put, it’s a way to calculate the starting point of the gear tooth’s curved part.
+
+\subsubsection{Involute Function}
+The involute function, denoted as \( \mathrm{inv}(\alpha) \), is a mathematical representation that connects the pressure angle (\( \alpha \)) with the roll angle (\( \psi \)). It’s succinctly defined by the equation:
+\begin{equation}
+    \mathrm{inv}\alpha=\psi-\alpha
+\end{equation}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.23\linewidth]{Fig 2.7 Involute Funtion graph[10].png}
+    \caption{Involute function graph\cite{ChadGlinsky10}}
+    \label{fig:enter-label}
+\end{figure} \\
+The basic equation to calculate the angle the length of distance TP is corresponding to the arc distance ST on the base circle, because the rolling lines roll without gliding on the base circle during construction of involute. \cite{Calculation-of-involute-gears-6}
+\begin{equation}
+    \overline{ST} = \overline{TP}
+\end{equation}
+Using this equation for relationship between the angles ($\phi$) \text{ and } ($\alpha$).
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{en-involute-gear-calculate-involute-function-01.jpeg.jpg}
+    \caption{Involute function Definition \cite{Calculation-of-involute-gears-6}}
+    \label{fig:enter-label}
+\end{figure}
+\begin{equation}
+    \overline{ST} = \overline{TP}
+\end{equation}
+\begin{equation}
+    r_b \cdot (\phi + \alpha) = r_b \cdot \tan(\alpha)
+\end{equation}
+\begin{equation}
+    \phi = \tan(\alpha) - \alpha \cite{Calculation-of-involute-gears-6}
+\end{equation}
+As a result of this function is called the Involute function ($\text{inv}(\alpha)$). Many geometric properties can be calculated with this function.
+\begin{equation}
+    \text{inv}(\alpha) = \tan(\alpha) - \alpha = \phi. Involute function.\cite{Calculation-of-involute-gears-6}
+\end{equation}
+
+\subsubsection{Calculation of tooth Thickness}
+The tooth thickness calculation provides insight into how the involute function can be utilized to ascertain the tooth thickness \( s \) on a given diameter of the gear. This diagram illustrates the geometric relations, where \( s_0 \) is the tooth thickness on the reference pitch circle and \( r_0 \) is the corresponding radius of the reference pitch circle. The tooth thickness at a specific distance \( r \) from the center of the base circle \( G \) is denoted by \( s \)\cite{Calculation-of-involute-gears-6}.
+\begin{figure} [h]
+    \centering
+    \includegraphics[width=0.25\linewidth]{en-involute-gear-calculate-circular-tooth-thickness (2)-01.jpeg.jpg}
+    \caption{Calculation of tooth thickness\cite{Calculation-of-involute-gears-6}}
+    \label{fig:enter-label}
+\end{figure}
+The formula derived for the calculation of tooth thickness \( s \) is seen by the yellow triangle in the figure. The acute angle of the yellow triangle can be solved by the difference between the angles \( \alpha_0 \) and \( \alpha \), where these angles are determined according to the definition of radians as the ratio of the arc length to the length of the radius.\cite{Calculation-of-involute-gears-6}
+\begin{equation}
+    \delta_0 = \left(\frac{s_0}{2}\right) / r_0 = \frac{s_0}{2r_0} = \frac{s_0}{d_0} \quad \text{and} \quad \delta = \left(\frac{s}{2}\right) / r = \frac{s}{2r} = \frac{s}{d}
+\end{equation}
+Likewise, the acute angle of the yellow triangle can also be calculated by the difference between the angles \( \phi \) and \( \phi_0 \). Then the equation is formed between the angles \( \delta \) and \( \phi \) or \( \delta_0 \) and \( \phi_0 \) \cite{Calculation-of-involute-gears-6}:
+\begin{equation}
+    \delta - \delta_0 = \phi_0 - \phi
+\end{equation}
+\begin{equation}
+    \frac{s}{d} - \frac{s_0}{d_0} = \phi_0 - \phi
+\end{equation}
+Then the equation can now be solved to obtain the tooth thickness \( s \) as a function of the considered diameter \( d \):
+\begin{equation}
+    s = d \left( \frac{s_0}{d_0} + \phi_0 - \phi \right)
+\end{equation}
+The angles \( \phi \) and \( \phi_0 \) correspond to the angles determined using the involute function \( \text{inv}(\alpha) \) according to equation (15).
+\begin{equation}
+     s = d \left( \frac{s_0}{d_0} + \text{inv}(\alpha_0) - \text{inv}(\alpha) \right) \quad  
+\end{equation}
+
+Using this equation , it's to note that the tooth thickness \( s_0 \) on the reference pitch circle is dependent on a possible profile shift. The relationship between the profile shift coefficient \( x \) and the tooth thickness \( s_0 \) has been previously derived as follows (with \( m \) as the module of the gear) \cite{Calculation-of-involute-gears-6}:
+\begin{equation}
+    s_0 = m \cdot \left( \frac{\pi}{2} + 2 \cdot x \cdot \tan(\alpha_0) \right) \quad 
+\end{equation}
+The involute angle \( \alpha \) in equation (21) corresponds to the operating pressure angle if the point \( P \) being considered and it lies on the operating pitch circle.The point \( P_0 \), situated on the reference pitch circle, the involute angle \( \alpha_0 \) is then identical to the standard pressure angle \( \alpha_0 \), value is set to be \( \alpha_0 = 0.349 \) rad (\( =20^\circ \)) \cite{Calculation-of-involute-gears-6}. 
+
+Considering point \( P \) on the circle for which the tooth thickness \( s \) is to be determined. It doesn't coincide with the actual operating pitch circle, any point \( P \) can always be viewed as being situated on an operating pitch circle.The operating pitch circle results from the center distance between the two gears in mesh. Since the center distance can be randomly chosen and the operating pitch circle can be adjusted to intersect point \( P \) \cite{Calculation-of-involute-gears-6}.
+
+A connection between the diameter \( d \) of the circle for which the tooth thickness \( s \) is to be determined and the operating pressure angle \( \alpha \) can be established. This connection can be identified by the standard pressure angle \( \alpha_0 \) and the corresponding diameter of the reference pitch circle \( d_0 \). The  basic circle diameter \( d_b \), which is consistent both when considering the operating pitch circle (with the parameters \( d \) and \( \alpha \)) and when considering the reference pitch circle (with the parameters \( d_0 \) and \( \alpha_0 \)) \cite{Calculation-of-involute-gears-6}.
+
+That is,
+\begin{equation}
+     d \cdot \cos(\alpha) = d_0 \cdot \cos(\alpha_0) 
+\end{equation}
+\begin{equation}
+    \Rightarrow \alpha = \arccos\left(\frac{d_0}{d} \cdot \cos(\alpha_0)\right) \quad 
+\end{equation}
+
+Using the involute function according to equation (15), the tooth thickness \( s \) at a considered circle with diameter \( d \) is completely determined.
+
+\subsubsection{Calculation of Circular and Base Pitch}
+
+The circular pitch (or circumferential pitch) represents the arc distance between two adjacent tooth flanks of the same direction. On any circle with diameter \( d \), the circular pitch \( p \) is determined by dividing the circumferential length \( \pi \cdot d \) by the number of teeth \( z \) \cite{Calculation-of-involute-gears-6}:
+\begin{equation}
+    p = \frac{\pi \cdot d}{z} \quad\
+\end{equation}
+Similarly, the reference pitch circle with diameter \( d_0 \), the circular pitch \( p_0 \) obtained is:
+\begin{equation}
+    p_0 = \frac{\pi \cdot d_0}{z} \quad 
+\end{equation}
+\begin{figure}[h]
+    \centering
+\includegraphics[width=0.35\linewidth]{en-involute-gear-calculate-pitch-01.jpeg.jpg}
+    \caption{Calculation of pitch\cite{Calculation-of-involute-gears-6}}
+    \label{fig:enter-label}
+\end{figure}
+By dividing equation (24) by equation (25),set a relationship between an arbitrary diameter \( d \) and the resulting circular pitch \( p \):
+\begin{equation}
+    \frac{p}{p_0} = \frac{d}{d_0} \quad 
+\end{equation}
+\begin{equation}
+    p = \frac{d}{d_0} \cdot p_0
+\end{equation}
+Equation (22) allows us to express the ratio \( \frac{d}{d_0} \) in terms of the involute angles \( \alpha \) and \( \alpha_0 \), corresponding to diameters \( d \) and \( d_0 \) respectively. \cite{Calculation-of-involute-gears-6}
+\begin{equation}
+   \frac{d}{d_0} =  \frac{\cos(\alpha_0)}{\cos(\alpha)} \quad
+\end{equation}
+
+By substituting equation (28) into equation (27), the pitch \( p \) can be determined as follows \cite{Calculation-of-involute-gears-6}
+\begin{equation}
+    p = \frac{d}{d_0} \cdot p_0 = \frac{\cos(\alpha_0)}{\cos(\alpha)} \cdot p_0 = \frac{p_0 \cdot \cos(\alpha_0)}{\cos(\alpha)} \quad 
+\end{equation}
+
+\begin{equation}
+    p_b= p_0 \cdot \cos(\alpha_0)
+\end{equation}
+\begin{equation}
+    p= \frac{p_b}{\cos(\alpha)}
+\end{equation}
+
+This above equation (31) is corresponding to base pitch \( p_b \), which corresponds to the distance between two tooth flanks in contact on the line of action during meshing
+
+Since the circular pitch \( p_0 \) can also be expressed as the product of the module \( m \) and \( \pi \) (i.e., \( p_0 = \pi \cdot m \)), the base pitch \( p_b \) is ultimately given by 
+ \begin{equation}
+     p_b = \pi \cdot m \cdot \cos(\alpha_0) \quad 
+ \end{equation}
+\subsubsection{Calculation of Center Distance}
+To determine the center distance of two corrected gears as a function of their respective profile shift coefficients \( x \), we start with ensuring backlash-free meshing. This ensures that the tooth thickness on the operating pitch circle of one gear fits exactly into the tooth space on the operating pitch circle of the mating gear. The sum of the respective tooth thicknesses \( s_1 \) and \( s_2 \) corresponds to the circumferential pitch \( p \) on the operating pitch circles of both gears\cite{Calculation-of-involute-gears-6}.
+\begin{equation}
+    p = s_1 + s_2 \quad 
+\end{equation}
+The circular pitch \( p \) on the operating pitch circles should not be confused with the circular pitch \( p_0 \) on the reference pitch circles.
+
+The tooth thickness \( s \) on an arbitrary circle with diameter \( d \) can be determined from equations (20) and (21):
+
+\begin{equation}
+     s = d \left( \frac{m}{d_0} \left( \frac{\pi}{2} + 2x \tan(\alpha_0) \right) + \text{inv}(\alpha_0) - \text{inv}(\alpha) \right)
+\end{equation}
+\begin{equation}
+    m= \frac{d_0}{z}
+\end{equation}
+\begin{equation}
+    s = d \left( \frac{1}{z} \left( \frac{\pi}{2} + 2x \tan(\alpha_0) \right) + \text{inv}(\alpha_0) - \text{inv}(\alpha) \right)
+\end{equation}
+
+Since the involute function \( \text{inv}(\alpha) \) refers to the operating pitch circles \( d_1 \) or \( d_2 \), the involute angle \( \alpha\) corresponds to the operating pressure angle \(\alpha_b\). 
+From equation (33), it is:
+\begin{equation}
+    p = d_1 \left( \frac{1}{z_1} \left( \frac{\pi}{2} + 2x_1 \tan(\alpha_0) \right) + \text{inv}(\alpha_0) - \text{inv}(\alpha_b) \right) + d_2 \left( \frac{1}{z_2} \left( \frac{\pi}{2} + 2x_2 \tan(\alpha_0) \right) + \text{inv}(\alpha_0) - \text{inv}(\alpha_b) \right) \
+\end{equation}
+The operating pitch circle diameters \( d_1 \) or \( d_2 \) can be determined from the definition of the circular pitch \( p \) as the ratio of the pitch circle circumference \( \pi \cdot d \) and the number of teeth \( z \) (i.e., \( p = \frac{\pi \cdot d}{z} \)). Therefore, for the operating pitch circle diameters of the two gears\cite{Calculation-of-involute-gears-6}, it applies:
+\begin{equation}
+    d_1 = z_1 \cdot \frac{p}{\pi} \quad \text{and} \quad d_2 = z_2 \cdot \frac{p}{\pi} \
+\end{equation}
+These equations can be applied in equation (33):
+\begin{equation}
+    p = z_1 \cdot \frac{p}{\pi} \left( \frac{1}{z_1} \left( \frac{\pi}{2} + 2x_1 \tan(\alpha_0) \right) + \text{inv}(\alpha_0) - \text{inv}(\alpha_b) \right) + z_2 \cdot \frac{p}{\pi} \left( \frac{1}{z_2} \left( \frac{\pi}{2} + 2x_2 \tan(\alpha_0) \right) + \text{inv}(\alpha_0) - \text{inv}(\alpha_b) \right) \
+\end{equation}
+Solving this equation for the operating pressure angle \( \alpha_b \) in terms of the involute function \( \text{inv}(\alpha_b) \) 
+
+finally leads to:
+\begin{equation}
+    \text{inv}(\alpha_b) = \frac{2x_1 + x_2}{z_1 + z_2} \tan(\alpha_0) + \text{inv}(\alpha_0) \
+\end{equation}
+\begin{equation}
+    \text{and} \quad \text{inv}(\alpha_0) = \tan(\alpha_0) - \alpha_0 \
+\end{equation}
+
+If the operating pressure angle is determined using such an approximation method, both the operating pitch circle diameter and the center distance can be calculated. The operating pitch circle diameter \( d \) and the reference pitch circle diameter \( d_0 \) are linked by the operating pressure angle \( \alpha_b \) and the standard pressure angle \( \alpha_0 \) as expressed by \cite{Calculation-of-involute-gears-6}
+\begin{equation}
+     d = d_0 \cdot \frac{\cos(\alpha_0)}{\cos(\alpha_b)} \text{operating pitch circle diameter} \
+\end{equation}
+The center distance \( a \) is the sum of the radii of the operating pitch circles, which is obtained from the equation \cite{Calculation-of-involute-gears-6}:
+\begin{equation}
+    a = \frac{d_1}{2} + \frac{d_2}{2} \
+\end{equation}
+\begin{equation}
+    (d_{0,1}/2) \cdot \left( \frac{\cos(\alpha_0)}{\cos(\alpha_b)} \right) + (d_{0,2}/2) \cdot \left( \frac{\cos(\alpha_0)}  {\cos(\alpha_b)} \right)
+\end{equation}
+\begin{equation}
+    (d_{0,1} + d_{0,2}) \cdot \left( \frac{\cos(\alpha_0)}{2 \cdot \cos(\alpha_b)} \right)
+\end{equation}
+\begin{equation}
+   ( m \cdot z_1 + m \cdot z_2) \cdot \left( \frac{\cos(\alpha_0)}{2 \cdot \cos(\alpha_b)} \right)
+\end{equation}
+\begin{equation}
+    a = m \cdot (z_1 + z_2) \cdot \frac{\cos(\alpha_0)}{2 \cdot \cos(\alpha_b)} \
+\end{equation}
+
+This equation allows for the determination of the center distance \( a \) between two gears, considering the respective tooth counts \( z_1 \) and \( z_2 \), the module \( m \), and the pressure angles \( \alpha_0 \) and \( \alpha_b \).
+
+\newpage
+
+\section{PROFILE SHIFT}
+
+Addendum is the tooth height above the pitch circle or radical distance between the tip diameter and the pitch diameter. For a process generating base, the datum line of the basic rack profile is not necessarily required to be in tangential contact with the reference circle; in this case, the changing of the form of a tooth can be done if it maintains the tangential position of the datum line\cite{mallesh2009effect7}. The tooth form profile is still involute. The radial shift off the tangential position is called profile shift, or factor of addendum modification. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Fig 3.1 Profile Shift.png}
+    \caption{ Profile Shift \cite{mallesh2009effect7}}
+    \label{fig:profile_shift}
+\end{figure}
+
+There are two types of profile shift based on the profile shift coefficient in relation to module:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.2\linewidth]{Fig 3.2 Positive Profile Shift[12].jpg.png}
+    \caption{ Positive Profile Shift\cite{KhkGearsProfileShiftCoefficient-12}}
+    \label{fig:positive_profile_shift}
+\end{figure}
+Positive Profile shift is the tooth profile outwards, which increases the tooth thickness and gear tip diameter\\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.2\linewidth]{Fig 3.3 Negetive Profile Shift[12].jpg.png}
+    \caption{ Negative Profile Shift\cite{KhkGearsProfileShiftCoefficient-12}}
+    \label{fig:negative_profile_shift}
+\end{figure}
+Negative Profile shift is the tooth profile inwards and reducing the tooth thickness.\\
+
+Undercuts can be avoided by profile shift of gears. Gears with different profile shifts can be mesh each other without further difficulty \cite{Profileshift-of-Involute-Gears5}.
+
+\subsection{Profile Shift Coefficient}
+As a rule, there are two possibilities of the profile shifted gears which are directly related to the module. If the profile shift coefficient is positive, the tool is moved to the outside. Since the coefficient value is negative, then a profile shift would therefore be towards the inside of the tooth.
+\begin{equation}
+    V = x*m
+\end{equation}
+The profile shift moves the profile of the tool outwards 0.25 times the module m when coefficient is x = +0.25. It can be seen then that, overall, radii of both the root circle (dedendum and the tip circle (addendum circle) becomes larger in diameter if the profile slides closer toward the crest.
+\begin{equation}
+   x = {Profile Shift}/{Module} 
+\end{equation}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Fig 3.4 Profile shift Coefficient (x).jpg}
+    \caption{ Profile shift Coefficient (x) \cite{Profileshift-of-Involute-Gears5}}
+    \label{fig:enter-label}
+\end{figure}
+For standard gears, the tip diameter \( d_{\mathrm{ao}} \) and root diameter \( d_{\mathrm{do}} \) are determined using the module (\( m \)) and the number of teeth (\( Z \)), along with a clearance factor for the root diameter (\( c \)). The equations for these diameters are:
+
+Tip diameter \begin{equation}
+    {(d}_{\mathrm{ao}})=m\cdot\left(Z+2\right) for standard gear
+\end{equation}
+
+Root diameter \begin{equation}
+    {(d}_{\mathrm{do}})=m\cdot\left(Z-2\right)-2\cdot c for standard gears
+\end{equation}
+
+When employing corrected gears with a positive profile shift (V), the tip circle radius and root circle radius are increased by the profile shift amount (V). The relevant diameters such as Tip diameter and Root diameter are calculated by,
+\begin{equation}
+    d_a = d_{\mathrm{ao}} + 2V = m \cdot (Z+2) + 2V = m \cdot (Z+2) + 2mx \\
+\end{equation}
+\begin{equation}
+     d_a = m \cdot (Z+2x+2)
+\end{equation}
+\begin{equation}
+    dd = ddo + 2·V = m·(Z-2)  2·c + 2·V = m·(Z-2) - 2·c + 2·m·x
+\end{equation}
+\begin{equation}
+    dd = m(Z + 2x - 2) - 2c
+\end{equation}
+\subsection{Influence of the profile shift on the shape of the tooth flank}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\linewidth]{Fig 3.5 Different tooth flanks of profile shifted gears [5].jpg}
+    \caption{ Different tooth flanks of profile shifted gears \cite{Profileshift-of-Involute-Gears5}}
+    \label{fig:enter-label}
+\end{figure}
+All profile shifted gears as well as all standard gears make use of the same involute for the tooth shape, relative to their standard gears. Only another part of the same involute is used. This makes it obvious when the tooth flanks of the gears with different profile shifts are placed on top of one another.
+The involute is strictly derived from the flank angle of the tool's profile, creating the base circle to produce involutes, i.e., the base circle and thus the involute change with a profile shift only in the angle of the cutting edges \cite{Profileshift-of-Involute-Gears5}.
+\subsection{Calculation of the profile shift coefficient to avoid undercutting}
+A profile shift can provide a possibility to avoid the undercut in an Involute Gear. Profile shift can be chosen to avoid undercut in a given number of teeth
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Fig 3.6 Profile shift coefficient to avoid undercut [5].jpg}
+    \caption{ Profile shift coefficient to avoid undercut \cite{Profileshift-of-Involute-Gears5}}
+    \label{fig:enter-label}
+\end{figure}
+For avoiding undercut, then the point B of the base circle of the line of action must lie outboard of the line of contact AE. In the limiting case that an undercut is to be just avoided, the starting of the undercut coincides with the ending of the line of action. The basic rack profile, here referred to as a "tool profile," then leaves the gear before it undercuts the tooth. Note that the end of contact, identified as the line of action tip line intersection of the base reference profile, can be shifted by a profile shift, while the line of action remains unchanged, as long as the profile is shifted positively.
+
+Considering the orange triangle in the figure, it can be shown that the non-operative side of the standard pressure angle \( \alpha_0 \) equals the sum of the module \( m \) and the profile shift \( V = x \cdot m \). Therefore, the distance \( CE \) between the point of contact \( C \) and the end of engagement \( E \) obeys the following expression:
+\begin{equation}
+    \sin(\alpha_0) = \frac{m - V \cdot CE}{CE} = \frac{m - m \cdot x \cdot CE}{CE} = \frac{m \cdot (1 - x)}{CE}
+\end{equation}
+
+\begin{equation}
+   CE = \frac{m \cdot (1 - x)}{\sin(\alpha_0)}
+\end{equation}
+Considering the blue triangle, the distance \( CE \) is considered as the pitch circle radius (\( r_0 \)) and pitch circle diameter (\( d_0 \)). The pitch circle diameter represents their distance according to the module (\( m \)) and number of teeth (\( z \)) \cite{Profileshift-of-Involute-Gears5}.
+ 
+\begin{equation}
+    \overline{CE} = r_0 \cdot \sin(\alpha_0) = \left(\frac{d_0}{2}\right) \cdot \sin(\alpha_0) = \left(\frac{m \cdot z}{2}\right) \cdot \sin(\alpha_0)
+\end{equation}
+\begin{equation}
+    \overline{CE} = \frac{m \cdot z}{2} \cdot \sin(\alpha_0)
+\end{equation}
+The two equations can now be equated and solved for the profile shift coefficient x:
+\begin{equation}
+    \bar{CE}=\bar{CE}
+\end{equation}
+\begin{equation}
+    \frac{m \cdot (1-x)}{\sin(\alpha_0)} = \frac{m \cdot z}{2} \cdot \sin(\alpha_0)
+\end{equation}
+\begin{equation}
+    x = (1 - z) \cdot \frac{\sin^2(\alpha_0)}{2}
+\end{equation}
+In the given equation, \( \frac{\sin^2(\alpha_0)}{2} \) represents the reciprocal of the minimum number of teeth (\( Z_{\text{min}} \)) above which an undercut occurs without profile shift. For a standard pressure angle (\( \alpha_0 \)) of 20°, the theoretical minimum number of teeth is \( Z_{\text{min}} = 17 \). The profile shift coefficient (\( x \)) required to prevent undercut can be determined using the formula provided.
+\begin{equation}
+    x= 1 - \left(\frac{z}{z_{\mathrm{min}}}\right) \quad \text{with} \quad z_{\mathrm{min}} = 17
+\end{equation}
+The profile shift factor \( x \) is then negative for larger numbers of teeth than \( Z_{\text{min}} \), so it is in theory possible to achieve a negative profile shift without generating any undercut \cite{Profileshift-of-Involute-Gears5}.
+\newpage
+\section{PROPOSED CONTENTS FOR EDUCATIONAL VIDEO}
+Inaddition to the report an educational animated video which usefully be focus on following will be made
+
+\subsection{Design}
+A clear explanation that primarily focuses on Involute Gear with or with out profile shift which include the parameters.
+
+\subsection{Working}
+Working principle and factors that would determine different aspect of  involute gear working. For example involute gear and its meshing, according to the profile shift how it would be performed, without profile shift working, etc
+
+\subsection{Desirable Features} 
+If the profile shift feature in Involute Gear is desirable according to the situations and understand it is the right choice or not.
+\newpage
+
+\section{DISCUSSION}
+\subsection{Application}
+The involute gears with profile shift have the following general applications:
+
+Application of involute gears in car transmissions, steering mechanisms, differentials, and other applications are used for effective power transmission from the engine to the wheels to accelerate smoothly and provide proper control over the directions.
+
+These are the gears among the entire bulk of constructional heavy machinery, including excavators, bulldozers, among others. They withstand high torques required to move large loads, and they work under hydraulic operations in harsh conditions at the site.
+
+The involute gears work meticulously on the factory floor running conveyor belts, presses, and packaging equipment. They also create fine movement to synchronize and adjust the speed of the various manufacturing processes.
+
+The function of involute gears does not stop with just small devices like watches and toys. These devices ensure that the mechanisms of the watch and vehicles of the toy work without interruption and in a stable manner, counting on accurate movement.
+
+\subsection{Advantages}
+Profile shifted involute gears Profile shifted involute gears are a sophisticated type of traditional involute gears, and one that is most dynamically superior and most flexible for all types of mechanical uses. For example, the gearbox of a high performance race car. In the high demand environments where performance is paramount, profile shifted involute gears are rather invaluable. 
+
+The following have their tooth profiles modified via profile shifting to allow for optimal load distribution and improved meshing characteristics:. It thus becomes possible, with this specific profile shifting, for the gear to be adapted by engineers in this strategic manner to cater to extreme stresses and high-speed operations that are met during racing conditions. 
+
+Profile shifting further helps to fine-tune gear geometry for noise and vibration reduction, providing designers a tool for achieving improved smoothness and reliability in transmission performance. 
+
+In addition, it leads to variable profile shifting, which makes gear characteristics adjustable to specific application requirements such as optimization of gear ratio and increases in torque capacity. 
+
+The involute gears with profile shifting represent a class example of leading technology and precision design that needs to go in for ensuring the best performances for high-level automotive applications while guaranteeing the highest possible levels of efficiency and reliability out on the racetrack.
+\subsection{Disadvantages}
+Nonetheless, involute gears have their limitations 
+In some cases, involute gears do not work for designs with a small number of teeth. Interference or undercut can easily happen, especially if addendum modifications are not used properly.
+
+By improper modification of the addendum, involute gears can have the risk of being undercut or interfere with each other in tooth contact. This underlines, in a manner of speaking, the importance of an explicit adjustment of the addendum of the gear to prevent such events.
+
+Sufficient lubrication is mandatory in case of involute gears to prevent the possibilities of high localized stress and premature wear. This allows easy running by providing a reduction in friction and effective dissipation of heat. These factors are critical in efficiency, durability, and reliability aspects of the involute gears for a wide range of applications.
+\newpage
+\section{CONCLUSION}
+
+In this technical report, we have looking into the geometrical design of Involute gear with profile shift with its parameters, which are different profile shifted gears widely used in various industries. We began by discussing the nomenclature of Involute gear and generation of involute gear. Generation of involute gear includes calculation of the curvature, pressure angle, Involute function, Tooth thickness, circular and base pitch, and center distance, which are essential mathematically generate for a gear. Also, we discussed about the profile shift coefficient, which is influence on the shape of the tooth flank and calculate profile shift to avoid undercutting.
+
+Designing Involute gear with profile shift in Lua script can be a challenging yet rewarding task. However, with proper knowledge of the Lua programming language and an understanding of the principles behind Involute gear, it is possible to create a profile shifted gear with focusing on the parameters. This report would be helpful for readers to model Involute gear in Icesl with help of Lua script. 
+
+We have highlighted the advantage and disadvantages of Involute gear: Effect of profile shift, as well as alternative solutions that can be employed in certain applications. To facilitate learning and understanding, we will propose an educational video that focuses on the design, working, and desirable features of Involute gear with profile shift. We believe that this video will be a valuable resource for engineers, students, and anyone else interested in the field of gear modelling and its constructions.
+
+The report contributes to the understanding of the design and operation of involute gear and provides valuable insights for anyone who is interested in Involute gear with effect of profile shift.
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{Biblography}
+\end{document}
