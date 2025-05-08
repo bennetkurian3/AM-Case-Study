@@ -1,0 +1,270 @@
+local math = require("math")
+
+-- Initialization of variables
+local x_Pi1 = {}
+local y_Pi1 = {}
+local basic_sine_profile = {}
+local betas = {}
+local rack_profile = {}
+local rack_profile_points = {}
+local complete_gear_diff = {}
+
+-- Input values
+local xc, yc = 0, 0  -- Center of the pitch circle
+local m = ui_scalar("Module", 1.5, 1, 5)  -- Module of the gear 
+local Ch = ui_scalar("Addendum Height Factor", 1, 0, 1)  -- Addendum height factor 
+local Z = ui_number("Number of teeth on pinion", 35, 10, 35)  -- Number of teeth
+local face_width = ui_scalar("Face width", 15, 5, 40)  -- Face width of the gear
+local rack_thickness = ui_scalar("Thickness of rack", 10, 2, 30)  -- Rack Thickness
+local num_points = 300  --Reduce this to if slow 
+local num_betas = 100  --  number of betas 
+
+-- Calculation of geometric variables
+local ha = Ch * m  -- Amplitude of the sine function (addendum)
+local p = math.pi * m  -- Circular pitch
+local Rp = (m * Z) / 2  -- Base circle radius
+local blank_radius = Rp + ha  -- Radius till tip circle
+
+
+--Function definition
+function linspace(start, stop, num)
+--- Generate a linearly spaced array from start to stop with num points
+-- @param start -Starting value
+-- @param stop - Ending value
+-- @param num - Number of points
+-- @return Array of linearly spaced values
+    local step = (stop - start) / (num - 1)
+    local t = {}
+    for i = 0, num - 1 do
+        table.insert(t, start + i * step)
+    end
+    return t
+end
+
+function generate_sine_profile(x_Pi1, ha, p)
+--- Generate sine profile points
+-- @param x_Pi1 - Array of x values along the pitch line of the gear
+-- @param ha -Amplitude of the sine function (addendum)
+-- @param p -Circular pitch
+-- @reference - [1] equation -(1)
+-- @return -Array of sine profile points
+    local profile = {}
+    for i, x in ipairs(x_Pi1) do
+        local y = ha * math.sin((2 * math.pi) * x / p)
+        profile[i] = v(x, y, 0)
+    end
+    -- Creating a closed contour of the sine profile rack
+    table.insert(profile, v(profile[#profile].x, profile[#profile].y + rack_thickness, profile[#profile].z))
+    table.insert(profile, v(profile[1].x, profile[1].y + rack_thickness, profile[1].z))
+    return profile
+end
+
+function precompute_trig(betas, alpha)
+--- Precompute cosines and sines for all betas
+-- @param betas -Array of beta values
+-- @return -Arrays of cosines and sines for all betas
+    local cos_betas = {}
+    local sin_betas = {}
+    for j, beta in ipairs(betas) do
+        cos_betas[j] = math.cos(alpha - beta)
+        sin_betas[j] = math.sin(alpha - beta)
+    end
+    return cos_betas, sin_betas
+end
+
+function generate_gear_profile(basic_sine_profile, betas, alpha, cos_betas, sin_betas, Rp, xc, yc)
+--- Generate rack profile points for each beta
+-- @param basic_sine_profile -Basic sine profile points
+-- @param betas -Array of beta values
+-- @param cos_betas -Precomputed cosines for betas
+-- @param sin_betas -Precomputed sines for betas
+-- @param Rp -Base circle radius
+-- @param xc -Center x-coordinate
+-- @param yc -Center y-coordinate
+-- @reference - [1] equation -(2),(3)
+-- @return Complete gear profile points
+    local complete_gear_diff = {}
+    for j, beta in ipairs(betas) do
+        local gamma = alpha - beta - (math.pi / 2)
+        local cos_gamma = math.cos(gamma)
+        local sin_gamma = math.sin(gamma)
+        local rack_profile_points = {}
+
+        for i, point in ipairs(basic_sine_profile) do
+            local x_val = xc + Rp * cos_betas[j] + (point.x - Rp * beta) * cos_gamma - (point.y * sin_gamma)
+            local y_val = yc + Rp * sin_betas[j] + (point.x - Rp * beta) * sin_gamma + (point.y * cos_gamma)
+            local z_val = point.z
+            rack_profile_points[i] = v(x_val, y_val, z_val)
+            table.insert(rack_profile,rack_profile_points)
+        end
+        table.insert(complete_gear_diff, linear_extrude(v(0, 0, face_width), rack_profile_points))
+    end
+    return complete_gear_diff
+end
+
+
+function merge_gear_profiles(complete_gear_diff)
+--- Merge all the extruded gear profiles
+-- @param complete_gear_diff -Array of extruded gear profiles
+-- @return Merged complete gear profile
+    local merged_complete_gear_diff = complete_gear_diff[1]
+    for i = 2, #complete_gear_diff do
+        merged_complete_gear_diff = union(merged_complete_gear_diff, complete_gear_diff[i])
+    end
+    return merged_complete_gear_diff
+end
+
+
+function create_gear(blank_radius, face_width, merged_complete_gear_diff)
+-- Function to create the gear
+--- Create the gear from the merged profile
+-- @param blank_radius -Radius till tip circle
+-- @param face_width Face width of the gear
+-- @param merged_complete_gear_diff -Merged gear profile
+-- @return Gear model
+    local blank = cylinder(blank_radius, face_width)
+    local gear = D(difference(blank, merged_complete_gear_diff), cylinder(0.3 * blank_radius, face_width))
+    local gear = U(gear,translate(0,Rp/1.5,face_width)*cylinder(Rp/6,face_width/1.5))
+    return gear
+end
+
+
+
+function create_rack(face_width)
+--- Create the rack
+-- Note this function takes a global rack_profile which is a global variable.
+-- @param face_width -Face width of the rack
+-- @return Rack model
+    return linear_extrude(v(0, 0, face_width), rack_profile[1])
+end
+
+
+function create_assembly_parts(Rp, rack_thickness, face_width, bottom_height)
+--- Create assembly parts
+-- @param Rp -Base circle radius
+-- @param rack_thickness -Thickness of rack
+-- @param face_width -Face width of the gear
+-- @param bottom_height -Face width of the gear
+-- @return Assembly parts model
+    local bottom_thickness = rack_thickness / 3
+    local rod_bottom = translate(0, Rp * math.pi, 0) * cylinder(0.29 * blank_radius, bottom_height)
+
+    local rod_top = translate(0, Rp * math.pi, bottom_height) * cylinder(0.29 * blank_radius, face_width)
+local rod_top = D(rod_top,(translate(0,Rp * 1 * math.pi,bottom_height+10)*cylinder(2.9,9)))
+    local bottom_part = translate(Rp + (rack_thickness + bottom_thickness) / 2, Rp * math.pi, 0) * cube((bottom_thickness + rack_thickness), Rp * 2 * math.pi, bottom_height)
+    local bottom_connection = translate(Rp / 2, Rp * math.pi, 0) * cube(Rp, blank_radius, bottom_height)
+    local bottom_connection_1 = translate(Rp + bottom_thickness / 2 + rack_thickness, Rp * math.pi, 0) * cube(bottom_thickness, Rp * 2 * math.pi, face_width + bottom_height)
+    local top_part = translate(Rp + 3 * (rack_thickness + bottom_thickness) / 4, Rp * math.pi, face_width + bottom_height) * cube((rack_thickness + bottom_thickness) / 2, Rp * 2 * math.pi, bottom_height)
+    local top_part  = U(top_part,translate(Rp +  (rack_thickness + bottom_thickness) / 4, Rp* math.pi/40, face_width + bottom_height) * cube((rack_thickness + bottom_thickness), Rp* math.pi/20, bottom_height))
+    local top_part  = U(top_part,translate(Rp +  (rack_thickness + bottom_thickness) / 4, Rp * 2 * math.pi-Rp* math.pi/40, face_width + bottom_height) * cube((rack_thickness + bottom_thickness), Rp* math.pi/20, bottom_height))
+
+
+
+bottom_part = D(bottom_part,translate(1.2*Rp,Rp * 1.9 * math.pi,0)*cylinder(1.8,5))
+bottom_part = D(bottom_part,translate(1.2*Rp,Rp * 0.1 * math.pi,0)*cylinder(1.8,5))
+bottom_part = D(bottom_part,translate(0,Rp * 1 * math.pi,-bottom_height)*cylinder(1.8,5))
+--emit(bottom_part)
+bottom_part = D(bottom_part,translate(1.2*Rp,-Rp * 1.9 * math.pi,0)*cylinder(1.8,5))
+--emit(translate(0,0,-50)*cube(148,210,10))
+
+    return union{top_part, rod_bottom, rod_top, bottom_connection_1, bottom_connection,bottom_part}
+end
+
+
+function add_text_on_gear(gear, Rp, face_width, text )
+--- Add text on the gear
+-- @param gear -Gear model
+-- @param Rp -Base circle radius
+-- @param face_width -Face width of the gear
+-- @param text -Input the text to be added on the gear as a string .
+-- @return Gear model with text
+    local f = font()
+    local text = f:str(text, 5)
+    return union(translate(-Rp / 2, -3 * Rp / 4, face_width) * scale(Rp / 40) * text, gear)
+end
+
+
+function add_text_on_rack(rack, Rp, face_width,rack_thickness,text )
+--- Add text on the gear
+-- @param gear -Gear model
+-- @param Rp -Base circle radius
+-- @param face_width -Face width of the gear
+--@param rack_thickness - Thickness of rack
+-- @param text -Input the text to be added on the gear as a string .
+-- @return Gear model with text
+    local f = font()
+    local text = f:str(tostring(text), 5)
+    rack = union(translate(Rp+rack_thickness/2,-Rp * math.pi+10, face_width)*rotate(0,0,90)* scale(Rp / 40) * text, rack)
+    return union(translate(Rp+rack_thickness/2,-Rp * math.pi, face_width)*cylinder(Rp/20,face_width/5),rack)
+end
+
+function create_top_cover(Rp,face_width)
+--create_top_cover = cylinder(10,3)
+t_shaft = translate(0,0,face_width)*cylinder(2.8,6)
+--top_cover = U(create_top_cover, t_shaft)
+emit (t_shaft)
+    return translate(0,0,face_width)*cylinder(Rp/3,face_width/10)
+--local top_cover = U(top_cover,(translate(0,Rp * 1 * math.pi,bottom_height+10)*cylinder(2.9,9))
+end
+
+
+-- Function calls
+
+-- Generate x values along the pitch line of the gear
+local x_Pi1 = linspace(0, Rp * 2 * math.pi, num_points)
+-- Calculate y values using the sine function
+local basic_sine_profile = generate_sine_profile(x_Pi1, ha, p)
+-- Generate beta values
+local betas = linspace(0, 2 * math.pi, num_betas)
+local alpha = 0
+-- Precompute cosines and sines for all betas
+local cos_betas, sin_betas = precompute_trig(betas, alpha)
+ -- Generate the sine profile pinion gear
+local complete_gear_diff = generate_gear_profile(basic_sine_profile, betas,alpha, cos_betas, sin_betas, Rp, xc, yc)
+-- Merge all the extruded gear profiles
+local merged_complete_gear_diff = merge_gear_profiles(complete_gear_diff)
+-- Create blank cylindrical block and gear
+local gear = create_gear(blank_radius, face_width, merged_complete_gear_diff)
+-- Generate the rack
+local rack = create_rack(face_width)
+local bottom_height = face_width / 3
+-- Create assembly parts
+local bracket = create_assembly_parts(Rp, rack_thickness, face_width, bottom_height)
+-- Add text on the gear
+gear = add_text_on_gear(gear, Rp, face_width,'AKAV')
+-- Add text on Rack 
+rack =  add_text_on_rack(rack, Rp,face_width,rack_thickness,'AKAV')
+cover  =  create_top_cover(Rp,face_width)
+
+-- Selection for STL creation
+local shape_list = {{0, "Pinion"}, {1, "Rack"}, {2, "Assembly Part"},{3,"Top Cover"},{4, "Assembled View"}}
+local shape = ui_radio("Select part for STL creation", shape_list)
+if shape == 0 then emit(gear)
+
+elseif shape == 1 then emit(rack)
+elseif shape == 2 then emit(bracket)
+elseif shape == 3 then emit(cover)
+elseif shape == 4 then
+
+----Assembled view
+num_point = 100
+local i=ui_numberBox("steps",0)
+step = (2*math.pi - 0) / (num_point- 1)
+angle = 0 + i * step
+--print(string.format("%7.3f \n",angle))
+rack = translate(v(0, Rp * 2 * math.pi + Rp*angle,bottom_height))*rack
+emit(rack,0)
+gear = translate(0,Rp*math.pi,bottom_height) * rotate(0, 0, -math.pi * ( 180 / math.pi )) * gear
+emit(translate(0,Rp*math.pi,0)*rotate(0,0,angle*(180/math.pi))*translate(0,-Rp*math.pi,0)*gear,6)
+screenshot()
+emit(bracket,1)
+emit(translate(0,Rp*math.pi,bottom_height)*cover)
+emit(translate(0,Rp*math.pi,0)*cube(Rp*math.pi*4,Rp*math.pi*4,2))
+end
+
+
+
+
+------References -------
+
+--[1] Horodinca, et.al. An approach on simulation of sine gear profile used on cylindrical gears. Buletinul Institutului Politehnic din Ia?i, 66(70), 2
